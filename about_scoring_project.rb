@@ -30,7 +30,43 @@ require File.expand_path(File.dirname(__FILE__) + '/neo')
 # Your goal is to write the score method.
 
 def score(dice)
-  # You need to write this method
+  return 0 if dice.empty?
+  raise 'too many rounds ' if dice.length > 6
+
+  numtimes = []
+  (1..6).map do |num|
+    numtimes << dice.select { |dc| dc == num }.length
+  end
+
+  score = 0
+
+  numtimes.each_with_index do |item, index|
+    case index
+    when 0
+      score += if item < 3
+                 item * 100
+               elsif item >= 3 && item < 6
+                 1000 + (item - 3) * 100
+               else
+                 2000
+               end
+    when 4
+      score += if item < 3
+                 item * 50
+               elsif item >= 3 && item < 6
+                 500 + (item - 3) * 50
+               else
+                 1000
+               end
+    when 1..3, 5
+      if item == 6
+        score += 200 * (index + 1)
+      elsif item >= 3 && item < 6
+        score += 100 * (index + 1)
+      end
+    end
+  end
+  score
 end
 
 class AboutScoringProject < Neo::Koan
